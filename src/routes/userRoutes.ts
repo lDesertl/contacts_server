@@ -4,19 +4,37 @@ import { authMiddleware } from "../middleware/authMiddleware";
 import { RequestWithUser } from "../middleware/authMiddleware";
 const router = express.Router();
 
-router.post(
+router.put(
   "/update",
   authMiddleware,
   async (req: RequestWithUser, res): Promise<void> => {
     const { email, password, phone } = req.body;
     const id = req.user?.userId;
     if (!id) {
-      res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "Не авторизован" });
       return;
     }
     try {
       await updateUser(id, email, password, phone);
-      res.json({ message: "User updated successfully" });
+      res.json({ message: "Пользователь успешно обновлен" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+router.delete(
+  "/delete",
+  authMiddleware,
+  async (req: RequestWithUser, res): Promise<void> => {
+    const id = req.user?.userId;
+    if (!id) {
+      res.status(401).json({ error: "Не авторизован" });
+      return;
+    }
+    try {
+      await updateUser(id, undefined, undefined, undefined);
+      res.json({ message: "Пользователь успешно удален" });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

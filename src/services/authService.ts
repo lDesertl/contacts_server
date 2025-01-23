@@ -11,8 +11,8 @@ interface TokenResponse {
 
 // регистрация
 const register = async (
-  password: string,
   phone: string,
+  password: string,
   email?: string
 ): Promise<TokenResponse> => {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -25,6 +25,8 @@ const register = async (
       cleanedPhone = "8" + cleanedPhone.slice(2);
     }
     if (!cleanedPhone.startsWith("8") || cleanedPhone.length != 11) {
+      console.log("number: ", phone);
+      console.log("clean: ", cleanedPhone);
       throw new Error("Неверный номер телефона");
     }
     const existingPhone = await User.findOne({

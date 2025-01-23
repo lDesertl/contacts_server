@@ -42,6 +42,7 @@ const updateUser = async (
     if (phone) {
       const cleanedPhone = phone.replace(/[^\d+]/g, "");
       if (!cleanedPhone.startsWith("8") || cleanedPhone.length != 11) {
+        console.log("cleanedPhone: ", cleanedPhone);
         throw new Error("Неверный номер телефона");
       }
       fieldsToUpdate.phone = cleanedPhone;
@@ -63,4 +64,11 @@ const updateUser = async (
     throw new Error(error.message);
   }
 };
-export { updateUser };
+const deleteUser = async (id: number) => {
+  try {
+    await User.destroy({ where: { id } });
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+export { updateUser, deleteUser };

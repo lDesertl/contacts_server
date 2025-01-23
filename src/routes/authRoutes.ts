@@ -1,11 +1,12 @@
 import express from "express";
 import { register, login, verifyToken } from "../services/authService";
+import e from "express";
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password, phone } = req.body;
+  const { phone, password, email } = req.body;
   try {
-    const { token } = await register(email, password, phone);
+    const { token } = await register(phone, password, email);
     res.json({ token });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
