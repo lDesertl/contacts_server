@@ -1,6 +1,5 @@
 import express from "express";
 import { register, login, verifyToken } from "../services/authService";
-
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
@@ -23,8 +22,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/verify", async (req, res) => {
-  const { token } = req.body;
+router.post("/verify", async (req, res): Promise<void> => {
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader) {
+    res.status(401).json({ error: "Authorization header is missing" });
+    return;
+  }
+  const token = authorizationHeader?.split(" ")[1];
   try {
     const decoded = verifyToken(token);
     res.json({ decoded });
@@ -32,4 +36,5 @@ router.post("/verify", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
 export default router;

@@ -34,4 +34,4 @@ Contact.init(
 User.hasMany(Contact, { foreignKey: "userId" });
 Contact.belongsTo(User, { foreignKey: "userId" });
 
-module.exports = Contact;
+export default Contact;

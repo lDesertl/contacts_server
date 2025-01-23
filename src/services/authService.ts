@@ -11,23 +11,36 @@ interface TokenResponse {
 
 // регистрация
 const register = async (
-  email: string,
   password: string,
-  phone: string
+  phone: string,
+  email?: string
 ): Promise<TokenResponse> => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   try {
     if (!password || !phone) {
       throw new Error("Необходимо заполнить все поля");
     }
-    const existingPhone = await User.findOne({ where: { phone } });
+    let cleanedPhone = phone.replace(/[^\d+]/g, "");
+    if (cleanedPhone.startsWith("+7")) {
+      cleanedPhone = "8" + cleanedPhone.slice(2);
+    }
+    if (!cleanedPhone.startsWith("8") || cleanedPhone.length != 11) {
+      throw new Error("Неверный номер телефона");
+    }
+    const existingPhone = await User.findOne({
+      where: { phone: cleanedPhone },
+    });
     if (existingPhone) {
       throw new Error("Этот номер телефона уже используется");
+    }
+    if (email && !emailPattern.test(email)) {
+      throw new Error("Недействительный email");
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       email,
       passwordHash: hashedPassword,
-      phone,
+      phone: cleanedPhone,
     });
     const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRATION_TIME,
@@ -57,13 +70,14 @@ const login = async (
   const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
   return { token };
 };
-
 // проверяем токен
 const verifyToken = (token: string): string | jwt.JwtPayload => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
+    console.log("--------------------------------------------------------");
+    console.log(token);
     throw new Error("Недействительный токен");
   }
 };

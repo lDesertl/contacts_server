@@ -3,7 +3,7 @@ import sequelize from "../config/db";
 
 interface UserAttributes {
   id: number;
-  email: string;
+  email: string | null;
   phone: string;
   passwordHash: string;
 }
