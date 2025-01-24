@@ -2,6 +2,7 @@ import express from "express";
 import {
   createContact,
   deleteContact,
+  findContactById,
   getUserContacts,
   updateContact,
 } from "../services/contactService";
@@ -67,6 +68,21 @@ router.get(
     try {
       const contacts = await getUserContacts(Number(userId));
       res.json(contacts);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+router.get(
+  "/contact/:id",
+  authMiddleware,
+  async (req: RequestWithUser, res): Promise<void> => {
+    const userId = req.user?.userId;
+    const { id } = req.params;
+    try {
+      const contact = await findContactById(Number(id), Number(userId));
+      res.json(contact);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

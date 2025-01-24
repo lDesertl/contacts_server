@@ -71,4 +71,13 @@ const deleteUser = async (id: number) => {
     throw new Error(error.message);
   }
 };
-export { updateUser, deleteUser };
+
+const findUserById = async (id: number) => {
+  try {
+    const user = await User.findByPk(id);
+    return user;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+export { updateUser, deleteUser, findUserById };

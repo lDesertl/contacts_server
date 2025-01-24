@@ -1,6 +1,5 @@
 import express from "express";
 import { register, login, verifyToken } from "../services/authService";
-import e from "express";
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
@@ -23,17 +22,20 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/verify", async (req, res): Promise<void> => {
+router.get("/verify", async (req, res): Promise<void> => {
   const authorizationHeader = req.headers.authorization;
   if (!authorizationHeader) {
+    console.log("authorizationHeader");
     res.status(401).json({ error: "Authorization header is missing" });
     return;
   }
   const token = authorizationHeader?.split(" ")[1];
   try {
+    console.log("authorizationHeader1");
     const decoded = verifyToken(token);
     res.json({ decoded });
   } catch (error: any) {
+    console.log("authorizationHeader2");
     res.status(400).json({ error: error.message });
   }
 });

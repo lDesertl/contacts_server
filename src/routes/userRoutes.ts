@@ -1,5 +1,5 @@
 import express from "express";
-import { updateUser } from "../services/userServices";
+import { deleteUser, findUserById, updateUser } from "../services/userServices";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { RequestWithUser } from "../middleware/authMiddleware";
 const router = express.Router();
@@ -28,13 +28,32 @@ router.delete(
   authMiddleware,
   async (req: RequestWithUser, res): Promise<void> => {
     const id = req.user?.userId;
+    console.log("Удаление");
     if (!id) {
       res.status(401).json({ error: "Не авторизован" });
       return;
     }
     try {
-      await updateUser(id, undefined, undefined, undefined);
+      await deleteUser(id);
       res.json({ message: "Пользователь успешно удален" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+router.get(
+  "/user",
+  authMiddleware,
+  async (req: RequestWithUser, res): Promise<void> => {
+    const id = req.user?.userId;
+    if (!id) {
+      res.status(401).json({ error: "Не авторизован" });
+      return;
+    }
+    try {
+      const user = await findUserById(id);
+      res.json(user);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
