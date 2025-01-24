@@ -43,4 +43,13 @@ const updateContact = async (
   }
 };
 
-export { createContact, deleteContact, updateContact };
+const getUserContacts = async (userId: number) => {
+  try {
+    const contacts = await Contact.findAll({ where: { userId } });
+    return contacts;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+export { createContact, deleteContact, updateContact, getUserContacts };

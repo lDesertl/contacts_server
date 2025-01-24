@@ -2,6 +2,7 @@ import express from "express";
 import {
   createContact,
   deleteContact,
+  getUserContacts,
   updateContact,
 } from "../services/contactService";
 import { authMiddleware } from "../middleware/authMiddleware";
@@ -52,6 +53,20 @@ router.put(
     try {
       await updateContact(Number(id), Number(userId), name, phone);
       res.json({ message: "Контакт успешно обновлен" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+router.get(
+  "/conacts",
+  authMiddleware,
+  async (req: RequestWithUser, res): Promise<void> => {
+    const userId = req.user?.userId;
+    try {
+      const contacts = await getUserContacts(Number(userId));
+      res.json(contacts);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
