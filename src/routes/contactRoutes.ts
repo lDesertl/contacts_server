@@ -60,7 +60,7 @@ router.put(
 );
 
 router.get(
-  "/conacts",
+  "/contacts",
   authMiddleware,
   async (req: RequestWithUser, res): Promise<void> => {
     const userId = req.user?.userId;
